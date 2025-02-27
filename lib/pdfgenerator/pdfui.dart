@@ -11,35 +11,68 @@ class PdfScreen extends StatefulWidget {
 class _PdfScreenState extends State<PdfScreen> {
   final TextEditingController customerController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
+  final TextEditingController mobileController = TextEditingController();
+  final TextEditingController brandController = TextEditingController();
+  final TextEditingController modelController = TextEditingController();
+  final TextEditingController vehicleController = TextEditingController();
+  final TextEditingController kmsController = TextEditingController();
   final List<List<String>> items = [];
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      appBar: AppBar(title: Text("Generate Invoice PDF")),
-      body: Padding(
+      appBar: AppBar(
+        title: Text("Generate Invoice PDF",style: TextStyle(color: Colors.white),),
+        centerTitle: true,
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: customerController,
-              decoration: InputDecoration(labelText: "Customer Name"),
-            ),
-            TextField(
-              controller: dateController,
-              decoration: InputDecoration(labelText: "Date"),
-            ),
+            _buildTextField("Customer Name", customerController),
+            _buildTextField("Mobile", mobileController, keyboardType: TextInputType.phone),
+            _buildTextField("Date", dateController, keyboardType: TextInputType.datetime),
+            _buildTextField("Brand Name", brandController),
+            _buildTextField("Model", modelController),
+            _buildTextField("Vehicle No", vehicleController),
+            _buildTextField("Kms", kmsController, keyboardType: TextInputType.number),
             SizedBox(height: 10),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () => _addItemDialog(context),
-              child: Text("Add Item"),
+              icon: Icon(Icons.add,color: Colors.white,),
+              label: Text("Add Item",style: TextStyle(color: Colors.white),),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _generatePdf(),
-              child: Text("Generate & Preview PDF"),
+            SizedBox(
+              width: screenWidth * 0.8, // Makes the button dynamic
+              child: ElevatedButton(
+                onPressed: () => _generatePdf(),
+                child: Text("Generate PDF", style: TextStyle(fontSize: 16,color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {TextInputType keyboardType = TextInputType.text}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(),
         ),
       ),
     );
@@ -54,13 +87,13 @@ class _PdfScreenState extends State<PdfScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Add Item"),
+          title: Text("Add Item",style: TextStyle(color: Colors.black),),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: itemController, decoration: InputDecoration(labelText: "Item Name")),
-              TextField(controller: quantityController, decoration: InputDecoration(labelText: "Quantity")),
-              TextField(controller: priceController, decoration: InputDecoration(labelText: "Price")),
+              _buildTextField("Item Name", itemController),
+              _buildTextField("Quantity", quantityController, keyboardType: TextInputType.number),
+              _buildTextField("Amount", priceController, keyboardType: TextInputType.number),
             ],
           ),
           actions: [
@@ -71,7 +104,7 @@ class _PdfScreenState extends State<PdfScreen> {
                 });
                 Navigator.pop(context);
               },
-              child: Text("Add"),
+              child: Text("Add",style: TextStyle(color: Colors.black),),
             ),
           ],
         );
@@ -85,8 +118,15 @@ class _PdfScreenState extends State<PdfScreen> {
 
     String customer = customerController.text;
     String date = dateController.text;
+    String mobile = mobileController.text;
+    String brand = brandController.text;
+    String model = modelController.text;
+    String vehicle = vehicleController.text;
+    String kms = kmsController.text;
 
-    String pdfPath = await PdfService.generateInvoice(customer, date, items);
+    String pdfPath = await PdfService.generateInvoice(
+      customer, date, mobile, brand, model, vehicle, kms, items,
+    );
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("PDF saved at: $pdfPath")),

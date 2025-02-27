@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_generator_1/pdfgenerator/pdfui.dart';
+import 'package:pdf_generator_1/pdfgenerator/splash.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(      
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: PdfScreen()
+      home: SplashScreen()
     );
   }
 }
