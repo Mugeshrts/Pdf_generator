@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_generator_1/pdfgenerator/pdfgenerator.dart';
+import 'package:pdf_generator_1/pdfgenerator/pdfpreview.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 
@@ -18,6 +19,30 @@ class _PdfScreenState extends State<PdfScreen> {
   final TextEditingController kmsController = TextEditingController();
   final List<List<String>> items = [];
 
+   void _showPreview() async {
+    if (items.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please add at least one item!")));
+      return;
+    }
+
+    String pdfPath = await PdfService.generateInvoice(
+      customerController.text,
+      dateController.text,
+      mobileController.text,
+      brandController.text,
+      modelController.text,
+      vehicleController.text,
+      kmsController.text,
+      items,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PDFPreviewScreen(pdfPath: pdfPath),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -49,14 +74,15 @@ class _PdfScreenState extends State<PdfScreen> {
             SizedBox(height: 20),
             SizedBox(
               width: screenWidth * 0.8, // Makes the button dynamic
-              child: ElevatedButton(
-                onPressed: () => _generatePdf(),
-                child: Text("Generate PDF", style: TextStyle(fontSize: 16,color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
+              // child: ElevatedButton(
+              //   onPressed: () => _generatePdf(),
+              //   child: Text("Generate PDF", style: TextStyle(fontSize: 16,color: Colors.white)),
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.green,
+              //     padding: EdgeInsets.symmetric(vertical: 12),
+              //   ),
+              // ),
+              child: ElevatedButton(onPressed: _showPreview, child: Text("Preview Invoice")),
             ),
           ],
         ),
