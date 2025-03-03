@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pdf_generator_1/pdfgenerator/pdfgenerator.dart';
-import 'package:pdf_generator_1/pdfgenerator/pdfpreview.dart';
+import 'package:pdf_generator_1/karthi/pdfgenerator.dart';
+import 'package:pdf_generator_1/karthi/pdfpreview.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 

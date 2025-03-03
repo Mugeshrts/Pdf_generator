@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:pdf_generator_1/pdfgenerator/pdfui.dart';
+import 'package:pdf_generator_1/karthi/pdfui.dart';
 
 
 class SplashScreen extends StatefulWidget {
